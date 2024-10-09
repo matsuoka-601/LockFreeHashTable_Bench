@@ -8,7 +8,7 @@
 #include <cassert>
 #include <omp.h>
 #include <functional>
-#include "ParallelHashTable.hpp"
+#include "LockBasedHashTable.hpp"
 #include "LockFreeHashTable.hpp"
 #include "common/cmdline.h"
 
@@ -105,7 +105,7 @@ int main(int argc, char** argv) {
     }
 
 
-    constexpr unsigned BENCH_REPEAT = 3;
+    constexpr unsigned BENCH_REPEAT = 10;
     for (unsigned threadCount = 1; threadCount <= omp_get_num_procs(); threadCount++) {
         std::cerr << threadCount << ((threadCount == 1) ? " thread\n" : " threads\n");
 
@@ -126,9 +126,9 @@ int main(int argc, char** argv) {
             runTimeSum1 += BenchIter(hashes, chunks, pht, u, threadCount);
             runTimeSum2 += BenchIter(hashes, chunks, lfht, u, threadCount);
         }
-        double throughput1 = l / runTimeSum1 / 1e3;
-        double throughput2 = l / runTimeSum2 / 1e3;
-        std::cerr << "Parallel Hash Table   : " << throughput1 << " million insertion/sec\n";
+        double throughput1 = l / (runTimeSum1 / BENCH_REPEAT) / 1e3;
+        double throughput2 = l / (runTimeSum2 / BENCH_REPEAT) / 1e3;
+        std::cerr << "Lock Based Hash Table : " << throughput1 << " million insertion/sec\n";
         std::cerr << "Lock Free Hash Table  : " << throughput2 << " million insertion/sec\n";
     }
 }
