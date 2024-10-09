@@ -59,8 +59,8 @@ template<class T> double BenchIter(
 
 int main(int argc, char** argv) {
     cmdline::parser p;
-    p.add<unsigned>("hashes", 'n', "Number of hashes", false, 30000000, cmdline::range(1, INT_MAX));
-    p.add<unsigned>("unique-hashes", 'u', "Number of unique hashes", false, 1000000, cmdline::range(1, INT_MAX));
+    p.add<unsigned>("insertions", 'i', "Number of insertions", false, 30000000, cmdline::range(1, INT_MAX));
+    p.add<unsigned>("unique-keys", 'u', "Number of unique keys", false, 1000000, cmdline::range(1, INT_MAX));
     p.add("help", 'h', "print help");
 
     if (!p.parse(argc, argv) || p.exist("help")) {
@@ -68,15 +68,15 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    unsigned l = p.get<unsigned>("hashes");
-    unsigned u = p.get<unsigned>("unique-hashes");
+    unsigned l = p.get<unsigned>("insertions");
+    unsigned u = p.get<unsigned>("unique-keys");
 
     if (l < u) {
-        std::cerr << "Error: Invalid input. The number of unique strings (-u) should be equal to or less than the number of lines (-l)\n";
+        std::cerr << "Error: Invalid input. The number of unique keys (-u) should be equal to or less than the number of insertions (-n)\n";
         return 1;
     }
 
-    std::cerr << "Generating hashes...\n";
+    std::cerr << "Generating keys...\n";
 
     std::unordered_set<uint64_t> uniqueHashesSet;
 
